@@ -4,8 +4,16 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#define NO_OF_PHILOSOPHERS 200
-#define TIME_TO_DIE 50
+#define NO_OF_PHILOSOPHERS 3
+#define TIME_TO_DIE 105
+#define TIME_TO_EAT 100
+#define TIME_TO_SLEEP 100
+
+#define RESET_COLOR "\x1b[0m"
+#define RED_COLOR "\x1b[31m"
+#define GREEN_COLOR "\x1b[32m"
+#define YELLOW_COLOR "\x1b[33m"
+#define BLUE_COLOR "\x1b[34m"
 
 pthread_t philosophers[NO_OF_PHILOSOPHERS];
 pthread_t death_checker_thread;
@@ -34,13 +42,12 @@ void *death_checker(void *arg)
     {
         for (j = 0; j < NO_OF_PHILOSOPHERS; j++)
         {
-            long long current_timestamp = getTimestamp();
-			// printf("%lld %d check\n", current_timestamp, j + 1);
 			pthread_mutex_lock(&mutex_forks);
+            long long current_timestamp = getTimestamp();
             if (current_timestamp - last_meal_timestamp[j] > TIME_TO_DIE && last_meal_timestamp[j])
 			{
-				printf("%lld %d died\n", current_timestamp, j + 1);
-				printf("%lld %d died\n", current_timestamp - last_meal_timestamp[j], j + 1);
+				printf(RED_COLOR "%lld %d died\n" RESET_COLOR, current_timestamp, j + 1);
+				// printf("%lld %d died\n", current_timestamp - last_meal_timestamp[j], j + 1);
 				exit (1);
 			}
 			pthread_mutex_unlock(&mutex_forks);
@@ -57,66 +64,49 @@ void *philosopher(void *arg)
 
     while (1)
     {
-		pthread_mutex_lock(&mutex_forks);
+        pthread_mutex_lock(&mutex_forks);
 		last_meal_timestamp[i] = getTimestamp();
-		pthread_mutex_unlock(&mutex_forks);
+        pthread_mutex_unlock(&mutex_forks);
 
         pthread_mutex_lock(&mutex_forks);
 
         while (forks[right] || forks[left])
         {
             if (waiting[i] == 0)
-			{
-				printf("%lld %d is thinking\n", getTimestamp(), i + 1);
-				pthread_mutex_unlock(&mutex_forks);
-				usleep(1000);
-				pthread_mutex_lock(&mutex_forks);
-			}
+				printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
             waiting[i] = 1;
+
             pthread_mutex_unlock(&mutex_forks);
-            while (forks[right] || forks[left])
-                continue ;
+            usleep(1000);
             pthread_mutex_lock(&mutex_forks);
         }
 
         if (!forks[right] && !forks[left] && waiting[i] == 0)
-		{
-			printf("%lld %d is thinking\n", getTimestamp(), i + 1);
-			pthread_mutex_unlock(&mutex_forks);
-			usleep(1000);
-			pthread_mutex_lock(&mutex_forks);
-		}
+			printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
         waiting[i] = 0;
         forks[right] = 1;
         forks[left] = 1;
-        printf("%lld %d has taken a fork\n", getTimestamp(), i + 1);
-        printf("%lld %d is eating\n", getTimestamp(), i + 1);
-		last_meal_timestamp[i] = getTimestamp();
-		pthread_mutex_unlock(&mutex_forks);
 
-        usleep(300000);
-		// printf("%lld %d put down fork %d\n", getTimestamp(), i + 1, left);
-		// printf("%lld %d put down fork %d\n", getTimestamp(), i + 1, right);
+		pthread_mutex_unlock(&mutex_forks);
+        printf(GREEN_COLOR "%lld %d has taken a fork\n" RESET_COLOR, getTimestamp(), i + 1);
+        printf(GREEN_COLOR "%lld %d is eating\n" RESET_COLOR, getTimestamp(), i + 1);
+        pthread_mutex_lock(&mutex_forks);
+		last_meal_timestamp[i] = getTimestamp();
+        pthread_mutex_unlock(&mutex_forks);
+
+        usleep(TIME_TO_EAT * 1000);
+		// printf(GREEN_COLOR "%lld %d put down fork %d\n" RESET_COLOR, getTimestamp(), i + 1, left);
+		// printf(GREEN_COLOR "%lld %d put down fork %d\n" RESET_COLOR, getTimestamp(), i + 1, right);
 
         pthread_mutex_lock(&mutex_forks);
+
         forks[right] = 0;
         forks[left] = 0;	
 
-        // for (int j = 0; j < NO_OF_PHILOSOPHERS; j++)
-        // {
-        //     if (waiting[j])	
-        //     {
-        //         pthread_mutex_unlock(&mutex_forks);
-        //         usleep(100);
-        //         pthread_mutex_lock(&mutex_forks);
-        //         break;
-        //     }
-        // }
-
         pthread_mutex_unlock(&mutex_forks);
 
-        printf("%lld %d is sleeping\n", getTimestamp(), i + 1);
-        usleep(200000);
+        printf(YELLOW_COLOR "%lld %d is sleeping\n" RESET_COLOR, getTimestamp(), i + 1);
+        usleep(TIME_TO_SLEEP * 1000);
     }
 }
 
