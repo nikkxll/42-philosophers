@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:28:32 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/18 22:32:24 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/25 17:10:54 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,20 @@ size_t	ft_strlen(const char *s)
 	while (*s++)
 		i++;
 	return (i);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*mem;
+	size_t	num;
+
+	num = (size_t)-1;
+	if (count != 0 && (num / count) < size)
+		return (NULL);
+	num = count * size;
+	mem = malloc(num);
+	if (!mem)
+		return (NULL);
+	memset(mem, 0, num);
+	return (mem);
 }

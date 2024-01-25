@@ -1,44 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/25 14:19:30 by dnikifor          #+#    #+#             */
+/*   Updated: 2024/01/25 15:37:34 by dnikifor         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
 
-// cc -fsanitize=thread test.c
-
-#define NO_OF_PHILOSOPHERS 199
-#define TIME_TO_DIE 401
-#define TIME_TO_EAT 100
-#define TIME_TO_SLEEP 100
+#define NO_OF_PHILOSOPHERS 4
+#define TIME_TO_DIE 205
+#define TIME_TO_EAT 200
+#define TIME_TO_SLEEP 2
 #define EAT_NUMBER 1
 
 #define RESET_COLOR "\x1b[0m"
 #define RED_COLOR "\x1b[31m"
-#define GREEN_COLOR "\x1b[32m"
-#define YELLOW_COLOR "\x1b[33m"
-#define BLUE_COLOR "\x1b[34m"
 
 pthread_t philosophers[NO_OF_PHILOSOPHERS];
-pthread_t death_checker_thread;
 pthread_mutex_t fork_mutex[NO_OF_PHILOSOPHERS];
-pthread_mutex_t mutex_locker = PTHREAD_MUTEX_INITIALIZER;
+pthread_t death_checker_thread;
+pthread_mutex_t mutex_locker;
 struct timeval tv;
-int forks[NO_OF_PHILOSOPHERS];
 int meals[NO_OF_PHILOSOPHERS];
-int waiting[NO_OF_PHILOSOPHERS] = {0};
-long long last_meal_timestamp[NO_OF_PHILOSOPHERS] = {0};
+long long last_meal_timestamp[NO_OF_PHILOSOPHERS];
 int locker = 1;
 
-int meals_checker(int *arr, int size)
+int	meals_checker(int *arr, int size)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (i < NO_OF_PHILOSOPHERS)
 	{
 		if (arr[i] >= EAT_NUMBER)
 		{
 			i++;
-			continue;
+			continue ;
 		}
 		else
 			return (0);
@@ -46,29 +53,23 @@ int meals_checker(int *arr, int size)
 	return (1);
 }
 
-void init()
+void	init()
 {
-	int i;
-	for (i = 0; i < NO_OF_PHILOSOPHERS; i++)
-    {
-        forks[i] = 0;
-        pthread_mutex_init(&fork_mutex[i], NULL);
-    }
-	for (i = 0; i < NO_OF_PHILOSOPHERS; i++)
-		forks[i] = 0;
-	for (i = 0; i < NO_OF_PHILOSOPHERS; i++)
-		meals[i] = 0;
+	memset(meals, 0, NO_OF_PHILOSOPHERS * sizeof(int));
+	memset(last_meal_timestamp, 0, NO_OF_PHILOSOPHERS * sizeof(long long));
 }
 
-long long getTimestamp()
+long long	getTimestamp()
 {
 	gettimeofday(&tv, NULL);
-	return (long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000;
+	return ((long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000);
 }
 
-void *death_monitor(void *arg)
+void	*death_monitor(void *arg)
 {
-	int j;
+	int			j;
+	long long	current_timestamp;
+
 	while (1)
 	{
 		pthread_mutex_lock(&mutex_locker);
@@ -76,29 +77,37 @@ void *death_monitor(void *arg)
 		{
 			locker = 0;
 			pthread_mutex_unlock(&mutex_locker);
-			printf(RED_COLOR "%lld End of simulation\n" RESET_COLOR, getTimestamp());
+			printf(RED_COLOR "End of simulation\n" RESET_COLOR);
 			return (NULL);
 		}
-		for (j = 0; j < NO_OF_PHILOSOPHERS; j++)
+		j = 0;
+		while (j < NO_OF_PHILOSOPHERS)
 		{
-			long long current_timestamp = getTimestamp();
-			if (current_timestamp - last_meal_timestamp[j] > TIME_TO_DIE && last_meal_timestamp[j])
+			current_timestamp = getTimestamp();
+			if (current_timestamp - last_meal_timestamp[j] > TIME_TO_DIE
+				&& last_meal_timestamp[j])
 			{
 				locker = 0;
 				pthread_mutex_unlock(&mutex_locker);
-				printf(RED_COLOR "%lld %d died\n" RESET_COLOR, current_timestamp, j + 1);
+				printf(RED_COLOR "%lld %d died\n" RESET_COLOR,
+					current_timestamp, j + 1);
 				return (NULL);
 			}
+			j++;
 		}
 		pthread_mutex_unlock(&mutex_locker);
 	}
 }
 
-void *philosopher(void *arg)
+void	*philosopher(void *arg)
 {
-	int i = *(int *)arg;
-	int right = i;
-	int left = (i + NO_OF_PHILOSOPHERS - 1) % NO_OF_PHILOSOPHERS;
+	int	i;
+	int	right;
+	int	left;
+
+	i = *(int *)arg;
+	right = i;
+	left = (i + NO_OF_PHILOSOPHERS - 1) % NO_OF_PHILOSOPHERS;
 
 	pthread_mutex_lock(&mutex_locker);
 	while (locker)
@@ -107,48 +116,42 @@ void *philosopher(void *arg)
 
 		pthread_mutex_lock(&mutex_locker);
 		last_meal_timestamp[i] = getTimestamp();
+		pthread_mutex_unlock(&mutex_locker);
 
-		while (forks[right] || forks[left])
+		pthread_mutex_lock(&mutex_locker);
+		if (locker)
+			printf("%lld %d is thinking\n", getTimestamp(), i + 1);
+		pthread_mutex_unlock(&mutex_locker);
+
+		if (right < left)
 		{
-			if (locker && waiting[i] == 0)
-				printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
-			waiting[i] = 1;
-
-			pthread_mutex_unlock(&mutex_locker);
-			usleep(100);
-			pthread_mutex_lock(&mutex_locker);
+			pthread_mutex_lock(&fork_mutex[right]);
+			pthread_mutex_lock(&fork_mutex[left]);
 		}
-		if (locker && !forks[right] && !forks[left] && waiting[i] == 0)
-			printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
-		waiting[i] = 0;
+		else
+		{
+			pthread_mutex_lock(&fork_mutex[left]);
+			pthread_mutex_lock(&fork_mutex[right]);
+		}
 
-		// pthread_mutex_lock(&fork_mutex[right]);
-		forks[right] = 1;
-		// pthread_mutex_unlock(&fork_mutex[right]);
-		// pthread_mutex_lock(&fork_mutex[left]);
-		forks[left] = 1;
-		// pthread_mutex_unlock(&fork_mutex[left]);
-
+		pthread_mutex_lock(&mutex_locker);
 		if (locker)
 		{
-			printf(YELLOW_COLOR "%lld %d has taken a fork\n" RESET_COLOR, getTimestamp(), i + 1);
-			printf(YELLOW_COLOR "%lld %d is eating\n" RESET_COLOR, getTimestamp(), i + 1);
+			printf("%lld %d has taken a fork\n", getTimestamp(), i + 1);
+			printf("%lld %d has taken a fork\n", getTimestamp(), i + 1);
+			printf("%lld %d is eating\n", getTimestamp(), i + 1);
 		}
 		last_meal_timestamp[i] = getTimestamp();
 		pthread_mutex_unlock(&mutex_locker);
+
 		usleep(TIME_TO_EAT * 1000);
+		pthread_mutex_unlock(&fork_mutex[right]);
+		pthread_mutex_unlock(&fork_mutex[left]);
+
 		pthread_mutex_lock(&mutex_locker);
 		meals[i]++;
-
-		// pthread_mutex_lock(&fork_mutex[right]);
-		forks[right] = 0;
-		// pthread_mutex_unlock(&fork_mutex[right]);
-		// pthread_mutex_lock(&fork_mutex[left]);
-		forks[left] = 0;
-		// pthread_mutex_unlock(&fork_mutex[left]);
-
 		if (locker)
-			printf(GREEN_COLOR "%lld %d is sleeping\n" RESET_COLOR, getTimestamp(), i + 1);
+			printf("%lld %d is sleeping\n", getTimestamp(), i + 1);
 		pthread_mutex_unlock(&mutex_locker);
 
 		usleep(TIME_TO_SLEEP * 1000);
@@ -162,10 +165,13 @@ void *philosopher(void *arg)
 int main()
 {
 	init();
-	int i;
-	int philosopher_ids[NO_OF_PHILOSOPHERS];
+	int	i;
+	int	philosopher_ids[NO_OF_PHILOSOPHERS];
 
 	pthread_mutex_init(&mutex_locker, NULL);
+
+	for (i = 0; i < NO_OF_PHILOSOPHERS; i++)
+		pthread_mutex_init(&fork_mutex[i], NULL);
 
 	pthread_create(&death_checker_thread, NULL, death_monitor, NULL);
 
@@ -183,4 +189,4 @@ int main()
 	pthread_mutex_destroy(&mutex_locker);
 
 	return 0;
-}
+} 

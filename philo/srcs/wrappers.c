@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 23:03:21 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/19 14:45:59 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/25 19:02:31 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ static int	thread_error(int status, t_code code)
 		return (error_msg("Error occured with pthread_join.\n"));
 	else if (status != 0 && code == DETACH)
 		return (error_msg("Error occured with pthread_detach.\n"));
+	else
+		return (0);
 }
 
 int	mutex_wrapper(pthread_mutex_t *mutex, t_code code)

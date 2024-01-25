@@ -7,7 +7,7 @@ RM				:= rm -rf
 HEADERS_DIR		:= ./includes/
 SRCS_PATH		:= ./srcs/
 
-SRCS_CORE		:= main.c utils.c reader.c errors.c initialization.c
+SRCS_CORE		:= main.c utils.c reader.c errors.c initialization.c data_init.c philosophers.c wrappers.c
 # SRCS_BONUS		:= 
 
 HEADERS			:= -I$(HEADERS_DIR)
