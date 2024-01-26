@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/26 16:09:28 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/26 22:44:41 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ void	*monitor(void *arg)
 	while (1)
 	{
 		pthread_mutex_lock(&shared->meal);
-		if (shared->eat_number
-			&& meals_checker(shared->meals, shared->num_of_philo,
-				shared->eat_number))
+		if (shared->input->eat_number
+			&& meals_checker(shared->meals, shared->input->num_of_philo,
+				shared->input->eat_number))
 		{
 			pthread_mutex_unlock(&shared->meal);
 			pthread_mutex_lock(&shared->locker);
@@ -68,12 +68,12 @@ void	*monitor(void *arg)
 		}
 		pthread_mutex_unlock(&shared->meal);
 		j = -1;
-		while (++j < shared->num_of_philo)
+		while (++j < shared->input->num_of_philo)
 		{
 			pthread_mutex_lock(&shared->meal);
 			current_timestamp = get_timestamp(shared->philo[j]);
 			if (current_timestamp - shared->last_meal_ts[j] >=
-				shared->time_to_die / 1000
+				shared->input->time_to_die / 1000
 				&& shared->last_meal_ts[j])
 			{
 				pthread_mutex_unlock(&shared->meal);
@@ -99,7 +99,7 @@ void	*philosopher(void *arg)
 	philo = (t_philo *)arg;
 	i = philo->philo_id;
 	right = i;
-	left = (i + philo->shared->num_of_philo - 1) % philo->shared->num_of_philo;
+	left = (i + philo->shared->input->num_of_philo - 1) % philo->shared->input->num_of_philo;
 	pthread_mutex_lock(&philo->shared->locker);
 	while (philo->shared->flag_locker)
 	{
@@ -138,7 +138,7 @@ void	*philosopher(void *arg)
 		philo->shared->last_meal_ts[i] = get_timestamp(philo);
 		pthread_mutex_unlock(&philo->shared->meal);
 		
-		ft_usleep(philo->shared->time_to_eat / 1000, philo);
+		ft_usleep(philo->shared->input->time_to_eat / 1000, philo);
 		pthread_mutex_unlock(&philo->shared->fork_mutex[right]);
 		pthread_mutex_unlock(&philo->shared->fork_mutex[left]);
 
@@ -151,7 +151,7 @@ void	*philosopher(void *arg)
 			printf("%lld %d is sleeping\n", get_timestamp(philo), i + 1);
 		pthread_mutex_unlock(&philo->shared->locker);
 		
-		ft_usleep(philo->shared->time_to_sleep / 1000, philo);
+		ft_usleep(philo->shared->input->time_to_sleep / 1000, philo);
 
 		pthread_mutex_lock(&philo->shared->locker);
 	}
@@ -167,18 +167,18 @@ int	philosophers(t_shared *shared)
 	pthread_mutex_init(&shared->locker, NULL);
 	pthread_mutex_init(&shared->meal, NULL);
 
-	while (++i < shared->num_of_philo)
+	while (++i < shared->input->num_of_philo)
 		pthread_mutex_init(&shared->fork_mutex[i], NULL);
 
 	pthread_create(&shared->monitor, NULL, monitor, (void *)shared);
 	i = -1;
-	while (++i < shared->num_of_philo)
+	while (++i < shared->input->num_of_philo)
 	{
 		pthread_create(&shared->philo[i]->philo_pth, NULL,
 			philosopher, (void *)shared->philo[i]);
 	}
 	i = -1;
-	while (++i < shared->num_of_philo)
+	while (++i < shared->input->num_of_philo)
 		pthread_join(shared->philo[i]->philo_pth, NULL);
 
 	pthread_join(shared->monitor, NULL);

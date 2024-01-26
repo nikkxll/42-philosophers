@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/26 16:18:16 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/26 22:39:12 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,18 @@ typedef enum e_code
 	DETACH,
 }	t_code;
 
+typedef struct s_input
+{
+	long	num_of_philo;
+	long	time_to_die;
+	long	time_to_eat;
+	long	time_to_sleep;
+	long	eat_number;
+	int		args_number;
+}	t_input;
+
 typedef struct s_shared
 {
-	long		num_of_philo;
-	long		time_to_die;
-	long		time_to_eat;
-	long		time_to_sleep;
-	long		eat_number;
-	int			args_number;
 	int			flag_locker;
 	int			*meals;
 	long long	*last_meal_ts;
@@ -61,6 +65,7 @@ typedef struct s_shared
 	t_time		tv;
 	pthread_t	monitor;
 	t_philo		**philo;
+	t_input		*input;
 }	t_shared;
 
 
