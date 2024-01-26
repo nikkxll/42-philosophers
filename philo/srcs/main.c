@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:14:09 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/25 18:53:36 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/26 09:44:39 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 int	main(int argc, char **argv)
 {
-	t_philo	*philo;
+	t_shared	*shared;
 
-	philo = (t_philo *)ft_calloc(1, sizeof(t_philo));
-	if (!philo)
+	shared = (t_shared *)ft_calloc(1, sizeof(t_shared));
+	if (!shared)
 		return (error_msg("Malloc error\n"));
-	if (initialization(argc, argv, philo))
+	if (initialization(argc, argv, shared))
 		return (1);
-	if (philosophers(philo))
+	if (philosophers(shared))
 		return (1);
 	return (0);
 }

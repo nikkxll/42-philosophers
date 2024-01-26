@@ -6,23 +6,17 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 18:52:48 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/25 18:07:25 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/26 09:45:11 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int	initialization(int ac, char **av, t_philo *philo)
+int	initialization(int ac, char **av, t_shared *shared)
 {
-	philo->input = (t_input *)ft_calloc(1, sizeof(t_input));
-	if (!philo->input)
-	{
-		free(philo);
-		return (error_msg("Malloc error\n"));
-	}
-	if (reader(ac, av, philo))
+	if (reader(ac, av, shared))
 		return (1);
-	if (data_initialization(philo))
+	if (data_initialization(shared))
 		return (1);
 	return (0);
 }
