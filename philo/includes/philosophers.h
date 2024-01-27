@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/26 22:39:12 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 16:57:54 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@
 
 # ifndef RESET_COLOR
 #  define RESET_COLOR "\x1b[0m"
+# endif
+
+# ifndef THINK
+#  define THINK 0
+# endif
+
+# ifndef EAT
+#  define EAT 1
+# endif
+
+# ifndef SLEEP
+#  define SLEEP 2
 # endif
 
 typedef struct s_philo	t_philo;
@@ -68,14 +80,13 @@ typedef struct s_shared
 	t_input		*input;
 }	t_shared;
 
-
 typedef struct s_philo
 {
 	t_shared	*shared;
+	t_input		*input;
 	pthread_t	philo_pth;
 	int			philo_id;
 }	t_philo;
-
 
 long	ft_atol(const char *str);
 int		reader(int ac, char **av, t_shared *shared);
