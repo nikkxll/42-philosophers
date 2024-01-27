@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 16:39:31 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/26 09:46:40 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 22:25:29 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,29 @@ int	error_msg(char *msg)
 	return (1);
 }
 
-int	error_struct_free(t_shared *shared, char *message)
+int	struct_free(t_shared *shared, char *message, int status)
 {
-	// if (philo->meals)
-	// 	free(philo->meals);
-	// if (philo->last_meal_ts)
-	// 	free(philo->last_meal_ts);
-	// if (philo->philo_ids)
-	// 	free(philo->philo_ids);
-	// if (philo->philosophers)
-	// 	free(philo->philosophers);
-	// if (philo->fork_mutex)
-	// 	free(philo->fork_mutex);
-	// free(philo->input);
+	t_philo **philo;
+	
+    philo = shared->philo;    
+	if (shared->meals)
+        free(shared->meals);    
+	if (shared->last_meal_ts)
+        free(shared->last_meal_ts);   
+	if (shared->fork_mutex)
+        free(shared->fork_mutex); 
+	while (*philo)
+    {       
+		free(*philo);
+        philo++;    
+	}
+	if (shared->philo)
+		free(shared->philo);
+	if (shared->input)
+		free(shared->input);
 	free(shared);
-	return (error_msg(message));
+	if (status)
+		return (error_msg(message));
+	else
+		return (0);
 }

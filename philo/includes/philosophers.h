@@ -6,13 +6,14 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 16:57:54 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:12:22 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
+# include "constants.h"
 # include <unistd.h>
 # include <limits.h>
 # include <stdlib.h>
@@ -21,40 +22,9 @@
 # include <stdio.h>
 # include <sys/time.h>
 
-# ifndef RED_COLOR
-#  define RED_COLOR "\x1b[31m"
-# endif
-
-# ifndef RESET_COLOR
-#  define RESET_COLOR "\x1b[0m"
-# endif
-
-# ifndef THINK
-#  define THINK 0
-# endif
-
-# ifndef EAT
-#  define EAT 1
-# endif
-
-# ifndef SLEEP
-#  define SLEEP 2
-# endif
-
 typedef struct s_philo	t_philo;
 typedef struct timeval	t_time;
 typedef pthread_mutex_t	t_mutex;
-
-typedef enum e_code
-{
-	LOCK,
-	UNLOCK,
-	INIT,
-	DESTROY,
-	CREATE,
-	JOIN,
-	DETACH,
-}	t_code;
 
 typedef struct s_input
 {
@@ -69,6 +39,7 @@ typedef struct s_input
 typedef struct s_shared
 {
 	int			flag_locker;
+	int			exit_flag;
 	int			*meals;
 	long long	*last_meal_ts;
 	t_mutex		locker;
@@ -91,11 +62,15 @@ typedef struct s_philo
 long	ft_atol(const char *str);
 int		reader(int ac, char **av, t_shared *shared);
 int		error_msg(char *msg);
-int		error_struct_free(t_shared *shared, char *message);
+int		struct_free(t_shared *shared, char *message, int status);
 size_t	ft_strlen(const char *s);
 void	*ft_calloc(size_t count, size_t size);
 int		initialization(int ac, char **av, t_shared *shared);
-int		data_initialization(t_shared *shared);
-int		philosophers(t_shared *shared);
+int		data_initialization(t_shared *shared, int i);
+int		philosophers(t_shared *shared, int i, int error);
+
+int		mutex_wrapper(pthread_mutex_t *mutex, t_code code);
+int		thread_wrapper(pthread_t *thread, void *(*foo)(void *),
+		void *data, t_code code);
 
 #endif

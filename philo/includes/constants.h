@@ -1,27 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   constants.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/17 13:14:09 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 23:00:37 by dnikifor         ###   ########.fr       */
+/*   Created: 2024/01/27 23:10:49 by dnikifor          #+#    #+#             */
+/*   Updated: 2024/01/27 23:12:03 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philosophers.h"
+#ifndef CONSTANTS_H
+# define CONSTANTS_H
 
-int	main(int argc, char **argv)
+# ifndef RED_COLOR
+#  define RED_COLOR "\x1b[31m"
+# endif
+
+# ifndef RESET_COLOR
+#  define RESET_COLOR "\x1b[0m"
+# endif
+
+# ifndef THINK
+#  define THINK 0
+# endif
+
+# ifndef EAT
+#  define EAT 1
+# endif
+
+# ifndef SLEEP
+#  define SLEEP 2
+# endif
+
+typedef enum e_code
 {
-	t_shared	*shared;
+	LOCK,
+	UNLOCK,
+	INIT,
+	DESTROY,
+	CREATE,
+	JOIN,
+	DETACH,
+}	t_code;
 
-	shared = (t_shared *)ft_calloc(1, sizeof(t_shared));
-	if (!shared)
-		return (error_msg("Malloc error\n"));
-	if (initialization(argc, argv, shared))
-		return (1);
-	if (philosophers(shared, -1, 0))
-		return (1);
-	return (0);
-}
+#endif

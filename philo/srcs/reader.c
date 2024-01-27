@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:13:59 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 13:33:51 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 22:17:01 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ static int	check_arg(int ac, char **av, int i, int j)
 int	reader(int ac, char **av, t_shared *shared)
 {
 	if (ac < 5 || ac > 6)
-		return (error_struct_free(shared, "Args number error.\n"));
+		return (struct_free(shared, "Args number error\n", 1));
 	if (check_arg(ac, av, 0, 0) == -1)
-		return (error_struct_free(shared, "Args content error.\n"));
+		return (struct_free(shared, "Args content error\n", 1));
 	shared->input->args_number = ac - 1;
 	shared->input->num_of_philo = ft_atol(av[1]);
 	shared->input->time_to_die = ft_atol(av[2]);
@@ -51,12 +51,12 @@ int	reader(int ac, char **av, t_shared *shared)
 		|| shared->input->time_to_eat == -1 || shared->input->time_to_eat == 0
 		|| shared->input->time_to_sleep == -1
 		|| shared->input->time_to_sleep == 0)
-		return (error_struct_free(shared, "Args convertion error.\n"));
+		return (struct_free(shared, "Args convertion error\n", 1));
 	if (ac == 6)
 	{
 		shared->input->eat_number = ft_atol(av[5]);
 		if (shared->input->eat_number == -1)
-			return (error_struct_free(shared, "Args convertion error.\n"));
+			return (struct_free(shared, "Args convertion error\n", 1));
 	}
 	else
 		shared->input->eat_number = 0;

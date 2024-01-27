@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 16:56:56 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:01:02 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ void	print_message(int procedure, t_philo *philo)
 	pthread_mutex_unlock(&philo->shared->locker);
 }
 
-void	ft_sleep(int procedure, t_philo *philo)
+void	ft_sleep_delay(int procedure, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->shared->locker);
 	if (procedure == EAT && philo->shared->flag_locker)
@@ -147,7 +147,14 @@ void	ft_sleep(int procedure, t_philo *philo)
 		pthread_mutex_unlock(&philo->shared->locker);
 }
 
-void	fork_locker(t_philo *philo, int left, int right)
+void	meal_timestamp(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->shared->meal);
+	philo->shared->last_meal_ts[philo->philo_id] = get_timestamp(philo);
+	pthread_mutex_unlock(&philo->shared->meal);
+}
+
+void	ft_eating(t_philo *philo, int left, int right)
 {
 	if (right < left)
 	{
@@ -159,31 +166,14 @@ void	fork_locker(t_philo *philo, int left, int right)
 		pthread_mutex_lock(&philo->shared->fork_mutex[left]);
 		pthread_mutex_lock(&philo->shared->fork_mutex[right]);
 	}
-}
-
-void	meal_timestamp(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->shared->meal);
-	philo->shared->last_meal_ts[philo->philo_id] = get_timestamp(philo);
-	pthread_mutex_unlock(&philo->shared->meal);
-}
-
-void	simulation(t_philo *philo, int left, int right)
-{
-	pthread_mutex_unlock(&philo->shared->locker);
-	print_message(THINK, philo);
-	fork_locker(philo, left, right);
 	print_message(EAT, philo);
 	meal_timestamp(philo);
-	ft_sleep(EAT, philo);
+	ft_sleep_delay(EAT, philo);
 	pthread_mutex_unlock(&philo->shared->fork_mutex[right]);
 	pthread_mutex_unlock(&philo->shared->fork_mutex[left]);
 	pthread_mutex_lock(&philo->shared->meal);
 	philo->shared->meals[philo->philo_id]++;
 	pthread_mutex_unlock(&philo->shared->meal);
-	print_message(SLEEP, philo);
-	ft_sleep(SLEEP, philo);
-	pthread_mutex_lock(&philo->shared->locker);
 }
 
 void	*philo_routine(void *arg)
@@ -198,32 +188,77 @@ void	*philo_routine(void *arg)
 		% philo->input->num_of_philo;
 	pthread_mutex_lock(&philo->shared->locker);
 	while (philo->shared->flag_locker)
-		simulation(philo, left, right);
+	{
+		pthread_mutex_unlock(&philo->shared->locker);
+		print_message(THINK, philo);
+		ft_eating(philo, left, right);
+		print_message(SLEEP, philo);
+		ft_sleep_delay(SLEEP, philo);
+		pthread_mutex_lock(&philo->shared->locker);
+	}
 	pthread_mutex_unlock(&philo->shared->locker);
 	return (NULL);
 }
 
-int	philosophers(t_shared *shared)
+int	mutex_cleaner(t_shared *shared, int current, int i)
 {
-	int	i;
+	while (++i < current)
+		mutex_wrapper(&shared->fork_mutex[i], DESTROY);
+	mutex_wrapper(&shared->locker, DESTROY);
+	mutex_wrapper(&shared->meal, DESTROY);	
+	return (struct_free(shared, NULL, 0));
+}
 
-	i = -1;
-	pthread_mutex_init(&shared->locker, NULL);
-	pthread_mutex_init(&shared->meal, NULL);
+void	thread_cleaner(t_shared *shared, int current, int i)
+{
+	while (++i < current)
+		thread_wrapper(&shared->philo[i]->philo_pth, NULL, NULL, JOIN);
+}
+
+int	philosophers(t_shared *shared, int i, int error)
+{
+	if (mutex_wrapper(&shared->locker, INIT))
+		return (struct_free(shared, NULL, 0));
+	if (mutex_wrapper(&shared->meal, INIT))
+	{
+		mutex_wrapper(&shared->locker, DESTROY);
+		return (struct_free(shared, NULL, 0));
+	}
 	while (++i < shared->input->num_of_philo)
-		pthread_mutex_init(&shared->fork_mutex[i], NULL);
-	pthread_create(&shared->monitor, NULL, monitor, (void *)shared);
+	{
+		if (mutex_wrapper(&shared->fork_mutex[i], INIT))
+			return (mutex_cleaner(shared, i, -1));
+	}
+	if (thread_wrapper(&shared->monitor, monitor, (void *)shared, CREATE))
+		return (mutex_cleaner(shared, shared->input->num_of_philo, -1));
 	i = -1;
 	while (++i < shared->input->num_of_philo)
 	{
-		pthread_create(&shared->philo[i]->philo_pth, NULL,
-			philo_routine, (void *)shared->philo[i]);
+		if (thread_wrapper(&shared->philo[i]->philo_pth,
+			philo_routine, (void *)shared->philo[i], CREATE))
+		{
+			thread_wrapper(&shared->monitor, NULL, NULL, JOIN);
+			thread_cleaner(shared, i, -1);
+			return (mutex_cleaner(shared, shared->input->num_of_philo, -1));
+		}
 	}
 	i = -1;
 	while (++i < shared->input->num_of_philo)
-		pthread_join(shared->philo[i]->philo_pth, NULL);
-	pthread_join(shared->monitor, NULL);
-	pthread_mutex_destroy(&shared->locker);
-	pthread_mutex_destroy(&shared->meal);
-	return (0);
+	{
+		if (thread_wrapper(&shared->philo[i]->philo_pth, NULL, NULL, JOIN))
+			error = 1;
+	}
+	if (thread_wrapper(&shared->monitor, NULL, NULL, JOIN))
+		error = 1;
+	i = -1;
+	while (++i < shared->input->num_of_philo)
+	{
+		if (mutex_wrapper(&shared->fork_mutex[i], DESTROY))
+			error = 1;
+	}
+	if (mutex_wrapper(&shared->locker, DESTROY))
+		error = 1;
+	if (mutex_wrapper(&shared->meal, DESTROY))
+		error = 1;
+	return (error);
 }
