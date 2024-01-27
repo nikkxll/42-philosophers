@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 16:39:31 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 22:25:29 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:24:35 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@ int	struct_free(t_shared *shared, char *message, int status)
 	if (shared->input)
 		free(shared->input);
 	free(shared);
-	if (status)
+	if (status == 1)
 		return (error_msg(message));
-	else
+	else if (status == 2)
+		return (2);
+	else 
 		return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 23:01:02 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:23:15 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,5 +260,7 @@ int	philosophers(t_shared *shared, int i, int error)
 		error = 1;
 	if (mutex_wrapper(&shared->meal, DESTROY))
 		error = 1;
+	if (error == 1)
+		struct_free(shared, NULL, 2);
 	return (error);
 }
