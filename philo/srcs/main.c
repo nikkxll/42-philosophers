@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:14:09 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 23:00:37 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 13:46:27 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int	main(int argc, char **argv)
 		return (error_msg("Malloc error\n"));
 	if (initialization(argc, argv, shared))
 		return (1);
-	if (philosophers(shared, -1, 0))
+	if (philosophers(shared))
 		return (1);
+	struct_free(shared, NULL, 0);
 	return (0);
 }

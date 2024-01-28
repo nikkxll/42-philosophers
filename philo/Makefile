@@ -2,13 +2,18 @@ NAME			:= philo
 
 CC				:= cc
 # CFLAGS			:= -g -Wall -Wextra -Werror
-CFLAGS			:= -g -fsanitize=thread -Wall -Wextra -Werror
+CFLAGS			:= -g -Wall -Wextra -Werror
 RM				:= rm -rf
 
 HEADERS_DIR		:= ./includes/
 SRCS_PATH		:= ./srcs/
 
-SRCS_CORE		:= main.c utils.c reader.c errors.c initialization.c data_init.c philosophers.c wrappers.c
+SRCS_CORE		:= main.c utils.c \
+	reader.c cleaner.c \
+	initialization.c philosophers.c \
+	wrappers.c checkers.c \
+	printing.c procedures.c \
+	threads_utils.c
 # SRCS_BONUS		:= 
 
 HEADERS			:= -I$(HEADERS_DIR)
