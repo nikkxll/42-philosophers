@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 14:22:30 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:22:51 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 22:06:48 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	meals_finish_check(t_shared *shared)
 {
-	if (shared->input->eat_number
+	if (shared->input->solo && shared->input->eat_number
 		&& meals_checker(shared->meals, shared->input->num_of_philo,
 			shared->input->eat_number))
 	{

@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:29:15 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 22:13:06 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_input
 	long	time_to_eat;
 	long	time_to_sleep;
 	long	eat_number;
-	int		args_number;
+	int		solo;
 }	t_input;
 
 typedef struct s_shared

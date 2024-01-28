@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 14:17:29 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:20:22 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 21:57:38 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,23 @@
 
 void	flag_locker(t_shared *shared, int status)
 {
-	if (status)
+	if (status == 1)
 	{
 		mutex_wrapper(&shared->locker, LOCK);
 		shared->flag_locker = 0;
 		shared->exit_flag = 1;
 		mutex_wrapper(&shared->locker, UNLOCK);
 	}
-	else
+	else if (status == 0)
 	{
 		mutex_wrapper(&shared->locker, LOCK);
 		shared->flag_locker = 0;
+		mutex_wrapper(&shared->locker, UNLOCK);
+	}
+	else
+	{
+		mutex_wrapper(&shared->locker, LOCK);
+		shared->input->solo = 0;
 		mutex_wrapper(&shared->locker, UNLOCK);
 	}
 }

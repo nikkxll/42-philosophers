@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:24:16 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 21:53:52 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	*philo_routine(void *arg)
 	left = (philo->philo_id + philo->input->num_of_philo - 1)
 		% philo->input->num_of_philo;
 	mutex_wrapper(&philo->shared->locker, LOCK);
-	while (philo->shared->flag_locker)
+	while (philo->shared->flag_locker && philo->input->solo)
 	{
 		mutex_wrapper(&philo->shared->locker, UNLOCK);
 		print_message(THINK, philo);

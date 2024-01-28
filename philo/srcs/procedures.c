@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 14:23:25 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:24:19 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 22:18:45 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,13 @@ void	ft_sleep_delay(int procedure, t_philo *philo)
 
 void	ft_eating(t_philo *philo, int left, int right)
 {
-	if (right < left)
+	if (philo->input->num_of_philo == 1)
+	{
+		printf("%lld %d has taken a fork\n", get_timestamp(philo),
+			philo->philo_id + 1);
+		flag_locker(philo->shared, 2);
+	}
+	else if (right < left)
 	{
 		mutex_wrapper(&philo->shared->fork_mutex[right], LOCK);
 		mutex_wrapper(&philo->shared->fork_mutex[left], LOCK);
