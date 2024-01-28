@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 14:22:30 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 22:06:48 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 23:12:33 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 int	meals_finish_check(t_shared *shared)
 {
+	mutex_wrapper(&shared->locker, LOCK);
 	if (shared->input->solo && shared->input->eat_number
 		&& meals_checker(shared->meals, shared->input->num_of_philo,
 			shared->input->eat_number))
 	{
+		mutex_wrapper(&shared->locker, UNLOCK);
 		mutex_wrapper(&shared->meal, UNLOCK);
 		flag_locker(shared, 0);
 		return (1);
 	}
+	mutex_wrapper(&shared->locker, UNLOCK);
 	return (0);
 }
 

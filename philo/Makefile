@@ -1,14 +1,13 @@
 NAME			:= philo
 
 CC				:= cc
-# CFLAGS			:= -g -Wall -Wextra -Werror
-CFLAGS			:= -g -Wall -Wextra -Werror
+CFLAGS			:= -g -fsanitize=thread -pthread -Wall -Wextra -Werror
 RM				:= rm -rf
 
 HEADERS_DIR		:= ./includes/
 SRCS_PATH		:= ./srcs/
 
-SRCS_CORE		:= main.c utils.c \
+SRCS_CORE		:= main.c libft.c \
 	reader.c cleaner.c \
 	initialization.c philosophers.c \
 	wrappers.c checkers.c \
@@ -49,8 +48,7 @@ $(NAME): $(SRCS) $(OBJS) $(HEADERS_CORE)
 # 	@echo "$(GREEN)--- Compilation of '$(NAME)' completed successfully ---$(NC)"
 
 clean:
-	@$(RM) $(NAME)
-	@$(RM) $(NAME).dSYM
+	@$(RM) $(NAME) $(NAME).dSYM .DS_Store
 	@$(RM) $(OBJS) $(OBJS_BONUS)
 	@echo "$(BLUE)--- Object files cleaned ---$(NC)"
 

@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 21:53:52 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/28 23:16:51 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	routine_creating(t_shared *shared, int i, int j)
 			flag_locker(shared, 0);
 			return (mutex_cleaner(shared, shared->input->num_of_philo, -1));
 		}
-		usleep(10);
+		usleep(500);
 	}
 	return (0);
 }
