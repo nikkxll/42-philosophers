@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 16:39:31 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 14:15:05 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:43:36 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,25 +23,25 @@ int	error_msg(char *msg)
 void	arrays_free(t_shared *shared)
 {
 	if (shared->meals)
-        free(shared->meals);    
+		free(shared->meals);
 	if (shared->last_meal_ts)
-        free(shared->last_meal_ts);   
+		free(shared->last_meal_ts);
 	if (shared->fork_mutex)
-        free(shared->fork_mutex); 
+		free(shared->fork_mutex);
 }
 
 int	struct_free(t_shared *shared, char *message, int status)
 {
-	t_philo **philo;
-	
-    philo = shared->philo;
+	t_philo	**philo;
+
+	philo = shared->philo;
 	arrays_free(shared);
 	if (shared->philo)
 	{
 		while (*philo)
 		{
 			free(*philo);
-			philo++;    
+			philo++;
 		}
 	}
 	if (shared->philo)
@@ -61,6 +61,6 @@ int	mutex_cleaner(t_shared *shared, int current, int i)
 	while (++i < current)
 		mutex_wrapper(&shared->fork_mutex[i], DESTROY);
 	mutex_wrapper(&shared->locker, DESTROY);
-	mutex_wrapper(&shared->meal, DESTROY);	
+	mutex_wrapper(&shared->meal, DESTROY);
 	return (struct_free(shared, NULL, 2));
 }

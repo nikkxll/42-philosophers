@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 14:21:27 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 21:55:39 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:44:41 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	print_message(int procedure, t_philo *philo)
 	if (procedure == THINK && philo->shared->flag_locker && philo->input->solo)
 		printf("%lld %d is thinking\n", get_timestamp(philo),
 			philo->philo_id + 1);
-	else if (procedure == EAT && philo->shared->flag_locker && philo->input->solo)
+	else if (procedure == EAT && philo->shared->flag_locker
+		&& philo->input->solo)
 	{
 		printf("%lld %d has taken a fork\n", get_timestamp(philo),
 			philo->philo_id + 1);
@@ -27,7 +28,8 @@ void	print_message(int procedure, t_philo *philo)
 		printf("%lld %d is eating\n", get_timestamp(philo),
 			philo->philo_id + 1);
 	}
-	else if (procedure == SLEEP && philo->shared->flag_locker && philo->input->solo)
+	else if (procedure == SLEEP && philo->shared->flag_locker
+		&& philo->input->solo)
 		printf("%lld %d is sleeping\n", get_timestamp(philo),
 			philo->philo_id + 1);
 	mutex_wrapper(&philo->shared->locker, UNLOCK);

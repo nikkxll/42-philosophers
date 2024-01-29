@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 22:13:06 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:32:58 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,31 +59,30 @@ typedef struct s_philo
 	int			philo_id;
 }	t_philo;
 
-long	ft_atol(const char *str);
-int		reader(int ac, char **av, t_shared *shared);
-int		error_msg(char *msg);
-int		struct_free(t_shared *shared, char *message, int status);
-size_t	ft_strlen(const char *s);
-void	*ft_calloc(size_t count, size_t size);
-int		initialization(int ac, char **av, t_shared *shared);
-int		data_initialization(t_shared *shared, int i);
-int		philosophers(t_shared *shared);
+long		ft_atol(const char *str);
+int			reader(int ac, char **av, t_shared *shared);
+int			error_msg(char *msg);
+int			struct_free(t_shared *shared, char *message, int status);
+size_t		ft_strlen(const char *s);
+void		*ft_calloc(size_t count, size_t size);
+int			initialization(int ac, char **av, t_shared *shared);
+int			data_initialization(t_shared *shared, int i);
+int			philosophers(t_shared *shared);
+int			mutex_wrapper(pthread_mutex_t *mutex, t_code code);
+int			thread_wrapper(pthread_t *thread, void *(*foo)(void *),
+				void *data, t_code code);
+int			mutex_cleaner(t_shared *shared, int current, int i);
 
-int		mutex_wrapper(pthread_mutex_t *mutex, t_code code);
-int		thread_wrapper(pthread_t *thread, void *(*foo)(void *),
-		void *data, t_code code);
-int		mutex_cleaner(t_shared *shared, int current, int i);
-
-int	meals_finish_check(t_shared *shared);
-int	death_check(t_shared *shared, int j);
-int	mutex_cleaner(t_shared *shared, int current, int i);
-void	print_message(int procedure, t_philo *philo);
-void	ft_sleep_delay(int procedure, t_philo *philo);
-void	ft_eating(t_philo *philo, int left, int right);
-void	flag_locker(t_shared *shared, int status);
-int	meals_checker(int *arr, int size, int eats);
-void	meal_timestamp(t_philo *philo);
+int			meals_finish_check(t_shared *shared);
+int			death_check(t_shared *shared, int j);
+int			mutex_cleaner(t_shared *shared, int current, int i);
+void		print_message(int procedure, t_philo *philo);
+void		ft_sleep_delay(int procedure, t_philo *philo);
+void		ft_eating(t_philo *philo, int left, int right);
+void		flag_locker(t_shared *shared, int status);
+int			meals_checker(int *arr, int size, int eats);
+void		meal_timestamp(t_philo *philo);
 long long	get_timestamp(t_philo *philo);
-void	ft_usleep(int ms, t_philo *philo);
+void		ft_usleep(int ms, t_philo *philo);
 
 #endif

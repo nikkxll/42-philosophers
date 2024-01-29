@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/28 23:16:51 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:44:11 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	routine_creating(t_shared *shared, int i, int j)
 	while (++j < shared->input->num_of_philo)
 	{
 		if (thread_wrapper(&shared->philo[j]->philo_pth,
-			philo_routine, (void *)shared->philo[j], CREATE))
+				philo_routine, (void *)shared->philo[j], CREATE))
 		{
 			flag_locker(shared, 0);
 			return (mutex_cleaner(shared, shared->input->num_of_philo, -1));
