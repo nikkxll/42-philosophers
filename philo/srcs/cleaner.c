@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 16:39:31 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/29 11:43:36 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:15:12 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	error_msg(char *msg)
 	return (1);
 }
 
-void	arrays_free(t_shared *shared)
+static void	arrays_free(t_shared *shared)
 {
 	if (shared->meals)
 		free(shared->meals);

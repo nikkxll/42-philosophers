@@ -6,13 +6,13 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 18:52:48 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/29 11:43:58 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:16:17 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int	init_philosopher(t_shared *shared, t_input *input, int i)
+static int	init_philosopher(t_shared *shared, t_input *input, int i)
 {
 	shared->philo[i] = (t_philo *)ft_calloc(1, sizeof(t_philo));
 	if (!shared->philo[i])
@@ -23,7 +23,7 @@ int	init_philosopher(t_shared *shared, t_input *input, int i)
 	return (0);
 }
 
-int	data_initialization(t_shared *shared, int i)
+static int	data_initialization(t_shared *shared, int i)
 {
 	shared->philo = (t_philo **)
 		ft_calloc(shared->input->num_of_philo + 1, sizeof(t_philo *));

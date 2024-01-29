@@ -6,13 +6,13 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/29 11:44:11 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:18:24 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-void	*monitor(void *arg)
+static void	*monitor(void *arg)
 {
 	int			j;
 	t_shared	*shared;
@@ -40,7 +40,7 @@ void	*monitor(void *arg)
 	return (NULL);
 }
 
-void	*philo_routine(void *arg)
+static void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
 	int		right;
@@ -64,7 +64,7 @@ void	*philo_routine(void *arg)
 	return (NULL);
 }
 
-int	routine_creating(t_shared *shared, int i, int j)
+static int	routine_creating(t_shared *shared, int i, int j)
 {
 	if (mutex_wrapper(&shared->locker, INIT))
 		return (struct_free(shared, NULL, 2));
@@ -93,7 +93,7 @@ int	routine_creating(t_shared *shared, int i, int j)
 	return (0);
 }
 
-int	routine_ending(t_shared *shared, int i)
+static int	routine_ending(t_shared *shared, int i)
 {
 	while (++i < shared->input->num_of_philo)
 	{

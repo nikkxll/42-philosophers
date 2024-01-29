@@ -13,19 +13,14 @@ SRCS_CORE		:= main.c libft.c \
 	wrappers.c checkers.c \
 	printing.c procedures.c \
 	threads_utils.c
-# SRCS_BONUS		:= 
 
 HEADERS			:= -I$(HEADERS_DIR)
 HEADERS_CORE 	:= $(HEADERS_DIR)/philosophers.h
-# HEADERS_BONUS 	:=
 
 OBJS_CORE		:= $(SRCS_CORE:.c=.o)
-# OBJS_BONUS		:= $(SRCS_BONUS:.c=.o)
 
 OBJS			:= $(addprefix $(SRCS_PATH), $(OBJS_CORE))
-# OBJS_BONUS		:= $(addprefix $(SRCS_PATH), $(OBJS_BONUS))
 SRCS			:= $(addprefix $(SRCS_PATH), $(SRCS_CORE))
-# SRCS_BONUS		:= $(addprefix $(SRCS_PATH), $(SRCS_BONUS))
 
 GREEN			:= \033[0;32m
 BLUE			:= \033[0;34m
@@ -39,13 +34,6 @@ $(NAME): $(SRCS) $(OBJS) $(HEADERS_CORE)
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
-
-# bonus: .bonus
-
-# .bonus: $(SRCS_BONUS) $(OBJS_BONUS) $(HEADERS_BONUS)
-# 	@$(CC) $(CFLAGS) $(HEADERS) $(SRCS_BONUS) -o $(NAME)
-# 	@touch .bonus
-# 	@echo "$(GREEN)--- Compilation of '$(NAME)' completed successfully ---$(NC)"
 
 clean:
 	@$(RM) $(NAME) $(NAME).dSYM .DS_Store

@@ -6,12 +6,20 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 23:10:49 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 23:12:03 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:25:14 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONSTANTS_H
 # define CONSTANTS_H
+
+# include <unistd.h>
+# include <limits.h>
+# include <stdlib.h>
+# include <string.h>
+# include <pthread.h>
+# include <stdio.h>
+# include <sys/time.h>
 
 # ifndef RED_COLOR
 #  define RED_COLOR "\x1b[31m"
