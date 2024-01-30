@@ -1,79 +1,137 @@
 #include <stdio.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <semaphore.h>
 #include <sys/time.h>
+#include <semaphore.h>
+#include <signal.h>
 
-#define N 5
-int		array[N];
-sem_t	*semaphores;
-struct timeval tv;
+#define NO_OF_PHILOSOPHERS 4
+#define TIME_TO_DIE 1990
+#define TIME_TO_EAT 100
+#define TIME_TO_SLEEP 100
+#define NUM_MEALS 2
 
-void *thread_function(void *arg)
+#define RESET_COLOR "\x1b[0m"
+#define RED_COLOR "\x1b[31m"
+#define GREEN_COLOR "\x1b[32m"
+#define YELLOW_COLOR "\x1b[33m"
+#define BLUE_COLOR "\x1b[34m"
+
+pthread_t philosophers[NO_OF_PHILOSOPHERS];
+pthread_t death_checker_thread;
+sem_t *forks;
+sem_t *locker;
+sem_t *end;
+sem_t *death;
+long long last_meal_timestamp;
+int number_of_meals = 0;
+pid_t pid[NO_OF_PHILOSOPHERS];
+
+long long getTimestamp()
 {
-	int id = *(int *)arg;
-	while (1)
-	{
-		sem_wait(semaphores);
-		sem_wait(semaphores);
-		gettimeofday(&tv, NULL);
-		long x = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-		printf("%ld Philosopher %d is eating.\n", tv.tv_sec * 1000 + tv.tv_usec / 1000, id + 1);
-		while (tv.tv_sec * 1000 + tv.tv_usec / 1000 < x + 100)
-		{
-			gettimeofday(&tv, NULL);
-			usleep(10);
-		}
-		sem_post(semaphores);
-		sem_post(semaphores);
-	}
-	printf("%d\n", id);
-	return NULL;
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000;
 }
 
-void init()
+void *death_monitor(void *arg)
 {
-	for (int i = 0; i < N; ++i)
-		array[i] = i;
+	int j;
+
+	while (1)
+	{
+		sem_wait(death);
+		if (NUM_MEALS && number_of_meals == NUM_MEALS)
+			return (NULL);
+		sem_post(death);
+		sem_wait(death);
+		long long current_timestamp = getTimestamp();
+		if (current_timestamp - last_meal_timestamp > TIME_TO_DIE && last_meal_timestamp)
+		{
+			sem_wait(locker);
+			printf(RED_COLOR "%lld %d died\n" RESET_COLOR, current_timestamp, j + 1);
+			return (NULL);
+		}
+		sem_post(death);
+	}
+}
+
+void routine(int i)
+{
+	pthread_create(&death_checker_thread, NULL, death_monitor, NULL);
+	pthread_detach(death_checker_thread);
+
+	last_meal_timestamp = getTimestamp();
+	while (number_of_meals != NUM_MEALS)
+	{
+		sem_wait(locker);
+		printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
+		sem_post(locker);
+
+		sem_wait(forks);
+		sem_wait(forks);
+		sem_wait(locker);
+		printf(YELLOW_COLOR "%lld %d has taken a fork\n" RESET_COLOR, getTimestamp(), i + 1);
+		printf(YELLOW_COLOR "%lld %d is eating\n" RESET_COLOR, getTimestamp(), i + 1);
+		sem_post(locker);
+		last_meal_timestamp = getTimestamp();
+		usleep(TIME_TO_EAT * 1000);
+
+		sem_wait(locker);
+		number_of_meals++;
+		sem_post(locker);
+
+		sem_post(forks);
+		sem_post(forks);
+
+		sem_wait(locker);
+		printf(GREEN_COLOR "%lld %d is sleeping\n" RESET_COLOR, getTimestamp(), i + 1);
+		sem_post(locker);
+
+		usleep(TIME_TO_SLEEP * 1000);
+	}
 }
 
 int main()
 {
-	pthread_t	tid;
-	pid_t		terminated_pid;
-	int			status;
+	int i;
+	int philosopher_ids[NO_OF_PHILOSOPHERS];
 
-	init();
-	sem_unlink("/forks_block");
-	semaphores = sem_open("/forks_block", O_CREAT | O_EXCL, 0644, N);
-	for (int i = 0; i < N; ++i)
+	sem_unlink("/forks");
+	sem_unlink("/locker");
+	sem_unlink("/end");
+	sem_unlink("/death");
+	forks = sem_open("/forks", O_CREAT, 0644, NO_OF_PHILOSOPHERS);
+	locker = sem_open("/locker", O_CREAT, 0644, 1);
+	end = sem_open("/end", O_CREAT, 0644, 1);
+	death = sem_open("/death", O_CREAT, 0644, 1);
+
+	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
 	{
-		pid_t pid = fork();
+		philosopher_ids[i] = i;
+		pid[i] = fork();
 
-		if (pid == -1)
+		if (pid[i] == -1)
 		{
 			perror("fork");
 			exit(EXIT_FAILURE);
 		}
-		if (pid == 0)
+		if (pid[i] == 0)
 		{
-			pthread_create(&tid, NULL, thread_function, (void *)&array[i]);
-			pthread_join(tid, NULL);
+			routine(philosopher_ids[i]);
 			exit(EXIT_SUCCESS);
 		}
 	}
-
-	for (int i = 0; i < N; ++i)
-	{
-		terminated_pid = waitpid(-1, &status, 0);
-
-		if (terminated_pid == -1)
-		{
-			perror("waitpid");
-			exit(EXIT_FAILURE);
-		}
-	}
-	sem_unlink("/forks_block");
+	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
+		waitpid(pid[i++], 0, 0);
+	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
+		kill(pid[i], SIGINT);
+	sem_close(forks);
+	sem_close(locker);
+	sem_unlink("/forks");
+	sem_unlink("/locker");
+	sem_unlink("/end");
+	sem_unlink("/death");
 	return 0;
 }
