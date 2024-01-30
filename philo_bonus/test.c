@@ -7,10 +7,10 @@
 #include <signal.h>
 
 #define NO_OF_PHILOSOPHERS 4
-#define TIME_TO_DIE 1990
+#define TIME_TO_DIE 201
 #define TIME_TO_EAT 100
 #define TIME_TO_SLEEP 100
-#define NUM_MEALS 2
+#define NUM_MEALS 5
 
 #define RESET_COLOR "\x1b[0m"
 #define RED_COLOR "\x1b[31m"
@@ -38,19 +38,20 @@ long long getTimestamp()
 void *death_monitor(void *arg)
 {
 	int j;
+	long long current_timestamp;
 
+	current_timestamp = getTimestamp();
 	while (1)
 	{
 		sem_wait(death);
-		if (NUM_MEALS && number_of_meals == NUM_MEALS)
-			return (NULL);
-		sem_post(death);
-		sem_wait(death);
-		long long current_timestamp = getTimestamp();
-		if (current_timestamp - last_meal_timestamp > TIME_TO_DIE && last_meal_timestamp)
+		// printf("%lld\n", current_timestamp - last_meal_timestamp);
+		current_timestamp = getTimestamp();
+		if (current_timestamp - last_meal_timestamp >= TIME_TO_DIE && last_meal_timestamp)
 		{
 			sem_wait(locker);
 			printf(RED_COLOR "%lld %d died\n" RESET_COLOR, current_timestamp, j + 1);
+			for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
+				sem_post(end);
 			return (NULL);
 		}
 		sem_post(death);
@@ -63,7 +64,7 @@ void routine(int i)
 	pthread_detach(death_checker_thread);
 
 	last_meal_timestamp = getTimestamp();
-	while (number_of_meals != NUM_MEALS)
+	while (1)
 	{
 		sem_wait(locker);
 		printf(BLUE_COLOR "%lld %d is thinking\n" RESET_COLOR, getTimestamp(), i + 1);
@@ -80,6 +81,8 @@ void routine(int i)
 
 		sem_wait(locker);
 		number_of_meals++;
+		if (number_of_meals == NUM_MEALS)
+			sem_post(end);
 		sem_post(locker);
 
 		sem_post(forks);
@@ -104,9 +107,11 @@ int main()
 	sem_unlink("/death");
 	forks = sem_open("/forks", O_CREAT, 0644, NO_OF_PHILOSOPHERS);
 	locker = sem_open("/locker", O_CREAT, 0644, 1);
-	end = sem_open("/end", O_CREAT, 0644, 1);
+	end = sem_open("/end", O_CREAT, 0644, NO_OF_PHILOSOPHERS);
 	death = sem_open("/death", O_CREAT, 0644, 1);
 
+	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
+		sem_wait(end);
 	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
 	{
 		philosopher_ids[i] = i;
@@ -124,9 +129,14 @@ int main()
 		}
 	}
 	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
-		waitpid(pid[i++], 0, 0);
+		sem_wait(end);
+
+	// for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
+	// 	waitpid(pid[i++], 0, 0);
 	for (int i = 0; i < NO_OF_PHILOSOPHERS; ++i)
 		kill(pid[i], SIGINT);
+	sem_close(death);
+	sem_close(end);
 	sem_close(forks);
 	sem_close(locker);
 	sem_unlink("/forks");
