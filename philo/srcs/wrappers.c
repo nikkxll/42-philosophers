@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 23:03:21 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/27 21:31:13 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/31 17:18:36 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ static int	thread_error(int status, t_code code)
 		return (error_msg("Error occured with pthread_create.\n"));
 	else if (status != 0 && code == JOIN)
 		return (error_msg("Error occured with pthread_join.\n"));
-	else if (status != 0 && code == DETACH)
-		return (error_msg("Error occured with pthread_detach.\n"));
 	else
 		return (0);
 }
@@ -60,8 +58,6 @@ int	thread_wrapper(pthread_t *thread, void *(*foo)(void *),
 				code));
 	else if (code == JOIN)
 		return (thread_error(pthread_join(*thread, NULL), code));
-	else if (code == DETACH)
-		return (thread_error(pthread_detach(*thread), code));
 	else
 		return (0);
 }

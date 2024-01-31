@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   constants.h                                        :+:      :+:    :+:   */
+/*   constants_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 23:10:49 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/31 17:18:25 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/01/31 19:14:24 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONSTANTS_H
-# define CONSTANTS_H
+#ifndef CONSTANTS_BONUS_H
+# define CONSTANTS_BONUS_H
 
-# include <unistd.h>
-# include <limits.h>
-# include <stdlib.h>
-# include <string.h>
-# include <pthread.h>
 # include <stdio.h>
+# include <pthread.h>
+# include <stdlib.h>
+# include <unistd.h>
 # include <sys/time.h>
+# include <semaphore.h>
+# include <signal.h>
+# include <limits.h>
+# include <string.h>
 
 # ifndef RED_COLOR
 #  define RED_COLOR "\x1b[31m"
@@ -43,12 +45,11 @@
 
 typedef enum e_code
 {
-	LOCK,
-	UNLOCK,
-	INIT,
-	DESTROY,
+	WAIT,
+	POST,
+	CLOSE,
 	CREATE,
-	JOIN,
+	DETACH,
 }	t_code;
 
 #endif
