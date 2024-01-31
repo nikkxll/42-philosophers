@@ -6,11 +6,25 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 23:03:21 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/31 19:15:13 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:34:34 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers_bonus.h"
+
+void	wait_post_wrapper(t_shared *shared, sem_t *semaphore, int procedure)
+{
+	if (procedure == WAIT)
+	{
+		if (sem_wrapper(semaphore, WAIT))
+			semaphore_parent_control(shared);
+	}
+	else
+	{
+		if (sem_wrapper(semaphore, POST))
+			semaphore_parent_control(shared);
+	}
+}
 
 static int	semaphore_error(int status, t_code code)
 {

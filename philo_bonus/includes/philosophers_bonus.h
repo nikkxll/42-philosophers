@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/31 19:15:26 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:35:00 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ void		print_message(int procedure, t_shared *shared);
 int			semaphore_clearing(t_shared *shared);
 void		semaphore_parent_control(t_shared *shared);
 int			sem_wrapper(sem_t *semaphore, t_code code);
+void		semaphore_closing(t_shared *shared);
+void		wait_post_wrapper(t_shared *shared, sem_t *semaphore, int procedure);
 
 /* procedures: eating and sleeping procedures */
 
