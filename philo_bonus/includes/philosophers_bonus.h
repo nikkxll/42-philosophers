@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/02/01 00:35:00 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:41:50 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 
 typedef struct timeval	t_time;
 
-/* structure to keep all arguments passed + solo as a flag if
-there is only one philosopher */
+/* structure to keep all arguments passed */
 typedef struct s_input
 {
 	long	num_of_philo;
@@ -29,7 +28,7 @@ typedef struct s_input
 	long	eat_number;
 }	t_input;
 
-/* structure to keep shared variables between threads */
+/* structure to keep simulation related variables */
 typedef struct s_shared
 {
 	pid_t		*pid;
@@ -45,19 +44,16 @@ typedef struct s_shared
 	sem_t		*death;
 }	t_shared;
 
-/* chechers: if somebody have already died or everyone finished
-their meal streak */
-int			meals_finish_check(t_shared *shared);
-int			death_check(t_shared *shared, int j);
-
-/* cleaner: to free all the memory that's been allocated, destroy mutexes
+/* cleaner: to free all the memory that's been allocated, destroy semaphores
 and print corresponding message if there is an error */
+void		kill_process(t_shared *shared, int i, int j);
+void		semaphore_closing(t_shared *shared);
+int			semaphore_clearing(t_shared *shared, int flag, int i, int j);
 int			error_msg(char *msg);
 int			struct_free(t_shared *shared, char *message, int status);
-int			mutex_cleaner(t_shared *shared, int current, int i);
 
-/* initialization: init variables from shared structure */
-int			initialization(int ac, char **av, t_shared *shared);
+/* simulation: simulation process itself */
+int			philosophers(t_shared *shared);
 
 /* libft: functions from libft in separate func since libft is
 not authorized */
@@ -65,32 +61,26 @@ long		ft_atol(const char *str);
 size_t		ft_strlen(const char *s);
 void		*ft_calloc(size_t count, size_t size);
 
-/* philosophers: core part of the program with philo and monitoring
-routines */
-int			philosophers(t_shared *shared);
-
 /* printing: print messages before think, eat or sleep */
-long long	get_timestamp(t_shared *shared);
-void		ft_usleep(int ms, t_shared *shared);
 void		print_message(int procedure, t_shared *shared);
-int			semaphore_clearing(t_shared *shared);
-void		semaphore_parent_control(t_shared *shared);
-int			sem_wrapper(sem_t *semaphore, t_code code);
-void		semaphore_closing(t_shared *shared);
-void		wait_post_wrapper(t_shared *shared, sem_t *semaphore, int procedure);
 
-/* procedures: eating and sleeping procedures */
+/* processing: initialization before simulation */
+int			initialization(int ac, char **av, t_shared *shared);
 
 /* reader: part of convertion from arguments vector + error handlers */
 int			reader(int ac, char **av, t_shared *shared);
 
-/* threads_utils: a couple of auxiliary functions for the routine */
-void		flag_locker(t_shared *shared, int status);
-int			meals_checker(int *arr, int size, int eats);
+/* utils: a couple of auxiliary functions for the routine */
+long long	get_timestamp(t_shared *shared);
+void		ft_usleep(int ms, t_shared *shared);
+int			semaphore_wait_control(t_shared *shared);
+int			semaphore_post_control(t_shared *shared);
+void		process_error(t_shared *shared, char *msg);
 
-/* wrappers: mutex and thread wrappers to handle possible errors */
-int			mutex_wrapper(pthread_mutex_t *mutex, t_code code);
+/* wrappers: semaphores and thread wrappers to handle possible errors */
 int			thread_wrapper(pthread_t *thread, void *(*foo)(void *),
 				void *data, t_code code);
-
+int			sem_wrapper(sem_t *semaphore, t_code code);
+void		wait_post_wrapper(t_shared *shared, sem_t *semaphore,
+				int procedure);
 #endif

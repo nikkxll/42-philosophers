@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 16:39:31 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/29 17:15:12 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:28:45 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	struct_free(t_shared *shared, char *message, int status)
 
 	philo = shared->philo;
 	arrays_free(shared);
-	if (shared->philo)
+	if (philo)
 	{
 		while (*philo)
 		{

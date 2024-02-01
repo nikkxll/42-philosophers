@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/29 17:40:38 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:41:02 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ long		ft_atol(const char *str);
 size_t		ft_strlen(const char *s);
 void		*ft_calloc(size_t count, size_t size);
 
-/* philosophers: core part of the program with philo and monitoring
+/* simulation: core part of the program with philo and monitoring
 routines */
 int			philosophers(t_shared *shared);
 

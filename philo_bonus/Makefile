@@ -7,9 +7,9 @@ RM				:= rm -rf
 HEADERS_DIR		:= ./includes/
 SRCS_PATH		:= ./srcs/
 
-SRCS_CORE		:= core_bonus.c libft_bonus.c \
+SRCS_CORE		:= simulation_bonus.c libft_bonus.c \
 	reader_bonus.c cleaner_bonus.c \
-	processing_bonus.c philosophers_bonus.c \
+	initialization_bonus.c philosophers_bonus.c \
 	utils_bonus.c printing_bonus.c wrappers_bonus.c
 
 HEADERS			:= -I$(HEADERS_DIR)

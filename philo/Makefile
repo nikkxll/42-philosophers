@@ -7,7 +7,7 @@ RM				:= rm -rf
 HEADERS_DIR		:= ./includes/
 SRCS_PATH		:= ./srcs/
 
-SRCS_CORE		:= core.c libft.c \
+SRCS_CORE		:= simulation.c libft.c \
 	reader.c cleaner.c \
 	initialization.c philosophers.c \
 	wrappers.c checkers.c \
