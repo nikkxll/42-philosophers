@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:13:59 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/01/31 17:02:21 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/01 18:37:16 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	reader(int ac, char **av, t_shared *shared)
 	if (ac == 6)
 	{
 		shared->input->eat_number = ft_atol(av[5]);
-		if (shared->input->eat_number == -1)
+		if (shared->input->eat_number == -1 || shared->input->eat_number == 0)
 			return (struct_free(shared, "--- Args convertion error ---\n", 1));
 	}
 	else
