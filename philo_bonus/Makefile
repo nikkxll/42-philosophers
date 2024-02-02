@@ -27,7 +27,7 @@ NC				:= \033[0m
 all: $(NAME)
 
 $(NAME): $(SRCS) $(OBJS) $(HEADERS_CORE)
-	@$(CC) $(CFLAGS) $(HEADERS) $(SRCS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(HEADERS) $(OBJS) -o $(NAME)
 	@echo "$(GREEN)--- Compilation of '$(NAME)' completed successfully ---$(NC)"
 
 %.o: %.c
