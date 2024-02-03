@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   core_bonus.c                                       :+:      :+:    :+:   */
+/*   simulation_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:58:12 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/02/01 15:25:02 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/03 14:13:22 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,27 @@ static void	*monitor(void *arg)
 
 static void	ft_eating(t_shared *shared)
 {
-	wait_post_wrapper(shared, shared->forks, WAIT);
-	wait_post_wrapper(shared, shared->forks, WAIT);
-	wait_post_wrapper(shared, shared->locker, WAIT);
-	print_message(EAT, shared);
-	wait_post_wrapper(shared, shared->locker, POST);
-	wait_post_wrapper(shared, shared->death, WAIT);
-	shared->last_meal_ts = get_timestamp(shared);
-	wait_post_wrapper(shared, shared->death, POST);
-	ft_usleep(shared->input->time_to_eat, shared);
-	wait_post_wrapper(shared, shared->locker, WAIT);
-	shared->meals++;
-	if (shared->meals == shared->input->eat_number)
-		wait_post_wrapper(shared, shared->end, POST);
-	wait_post_wrapper(shared, shared->locker, POST);
-	wait_post_wrapper(shared, shared->forks, POST);
-	wait_post_wrapper(shared, shared->forks, POST);
+	if (shared->input->num_of_philo == 1)
+		solo_child(shared);
+	else
+	{
+		wait_post_wrapper(shared, shared->forks, WAIT);
+		wait_post_wrapper(shared, shared->forks, WAIT);
+		wait_post_wrapper(shared, shared->locker, WAIT);
+		print_message(EAT, shared);
+		wait_post_wrapper(shared, shared->locker, POST);
+		wait_post_wrapper(shared, shared->death, WAIT);
+		shared->last_meal_ts = get_timestamp(shared);
+		wait_post_wrapper(shared, shared->death, POST);
+		ft_usleep(shared->input->time_to_eat, shared);
+		wait_post_wrapper(shared, shared->locker, WAIT);
+		shared->meals++;
+		if (shared->meals == shared->input->eat_number)
+			wait_post_wrapper(shared, shared->end, POST);
+		wait_post_wrapper(shared, shared->locker, POST);
+		wait_post_wrapper(shared, shared->forks, POST);
+		wait_post_wrapper(shared, shared->forks, POST);
+	}
 }
 
 static void	routine(t_shared *shared)

@@ -6,7 +6,7 @@
 /*   By: dnikifor <dnikifor@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 13:08:02 by dnikifor          #+#    #+#             */
-/*   Updated: 2024/02/01 16:41:50 by dnikifor         ###   ########.fr       */
+/*   Updated: 2024/02/03 14:12:38 by dnikifor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void		*ft_calloc(size_t count, size_t size);
 
 /* printing: print messages before think, eat or sleep */
 void		print_message(int procedure, t_shared *shared);
+void		solo_child(t_shared *shared);
 
 /* processing: initialization before simulation */
 int			initialization(int ac, char **av, t_shared *shared);
