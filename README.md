@@ -5,6 +5,7 @@
 - [Global rules](#global-rules)
 - [Mandatory](#mandatory)
 - [Bonus](#bonus)
+- [Usage](#usage)
 - [Results](#results)
 
 ## Overview
@@ -100,6 +101,19 @@ The specific rules for the bonus part are:
 • They have no states in memory but the number of available forks is represented by a semaphore.
 
 • Each philosopher should be a process. But the main process should not be a philosopher.
+
+## Usage
+
+To compile mandatory part files enter corresponding directory and build an executable
+```
+cd philo
+make
+```
+To compile bonus part files enter corresponding directory and build an executable
+```
+cd philo_bonus
+make bonus
+```
 
 ## Results
 
