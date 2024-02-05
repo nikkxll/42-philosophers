@@ -26,15 +26,22 @@ NC				:= \033[0m
 
 all: $(NAME)
 
-$(NAME): $(SRCS) $(OBJS) $(HEADERS_CORE)
+$(NAME): $(OBJS) $(HEADERS_CORE)
 	@$(CC) $(CFLAGS) $(HEADERS) $(OBJS) -o $(NAME)
 	@echo "$(GREEN)--- Compilation of '$(NAME)' completed successfully ---$(NC)"
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
+bonus: .bonus
+
+.bonus: $(OBJS) $(HEADERS_CORE)
+	@$(CC) $(CFLAGS) $(HEADERS) $(OBJS) -o $(NAME)
+	@echo "$(GREEN)--- Compilation of '$(NAME)' completed successfully ---$(NC)"
+	@ touch .bonus
+
 clean:
-	@$(RM) $(NAME) $(NAME).dSYM .DS_Store
+	@$(RM) $(NAME) $(NAME).dSYM .DS_Store .bonus
 	@$(RM) $(OBJS) $(OBJS_BONUS)
 	@echo "$(BLUE)--- Object files cleaned ---$(NC)"
 
