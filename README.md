@@ -78,7 +78,7 @@ A displayed state message should not be mixed up with another message.
 A message announcing a philosopher died should be displayed no more than 10 ms
 after the actual death of the philosopher.
 
-**❗ Program must not have any data races ❗**
+**❗ Program must not have any data races**
 
 ## Mandatory
 
